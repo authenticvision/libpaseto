@@ -21,12 +21,12 @@ bool paseto_init(void);
 void paseto_free(void *p);
 
 /**
- * Loads a hex-encoded key. Returns false on failure.
+ * Loads a hex-encoded key. Returns false on failure and sets errno.
  */
 bool paseto_v2_load_symmetric_key_hex(uint8_t key[paseto_v2_SYMMETRIC_KEYBYTES], const char key_hex[2 * paseto_v2_SYMMETRIC_KEYBYTES]);
 
 /**
- * Loads a base64-url-encoded key (without padding). Returns false on failure.
+ * Loads a base64-url-encoded key (without padding). Returns false on failure and sets errno.
  */
 bool paseto_v2_load_symmetric_key_base64(uint8_t key[paseto_v2_SYMMETRIC_KEYBYTES], const char *key_base64);
 
