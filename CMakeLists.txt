@@ -10,14 +10,24 @@ pkg_check_modules(SODIUM REQUIRED libsodium)
 include_directories(${SODIUM_INCLUDE_DIRS})
 
 include_directories(include)
-set(PASETO_SOURCES src/paseto_v2_symmetric.c src/paseto.c)
+set(PASETO_SOURCES
+        src/paseto_v2_symmetric.c
+        src/paseto.c
+        include/paseto.h)
 
 # shared library build
 add_library(paseto SHARED ${PASETO_SOURCES})
 target_link_libraries(paseto ${SODIUM_LIBRARIES})
 
 # test executable
-add_executable(pasetotest test/main.c test/helpers.c test/test.c test/v2vectors.c)
+add_executable(pasetotest
+        test/main.c
+        test/helpers.h
+        test/helpers.c
+        test/test.h
+        test/test.c
+        test/v2vectors.h
+        test/v2vectors.c)
 target_compile_definitions(pasetotest PRIVATE _POSIX_C_SOURCE=200809L)
 target_link_libraries(pasetotest ${SODIUM_LIBRARIES} paseto)
 
