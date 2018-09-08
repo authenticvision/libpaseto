@@ -6,9 +6,10 @@ bool paseto_init(void) {
 }
 
 void paseto_free(void *p) {
-    // Windows implements its allocator in the VC runtime. (Incidentally, the VC runtime just calls
-    // through to Windows' standard heap allocator, but we must not rely on this implementation
-    // detail.) The VC runtime is statically linked. Thus, we must make its free() implementation
-    // available to the caller.
+    // Windows implements its allocator in the VC runtime. (Incidentally, the VC
+    // runtime just calls through to Windows' standard heap allocator, but we
+    // must not rely on this implementation detail.) The VC runtime is
+    // statically linked. Thus, we must make its free() implementation available
+    // to the caller.
     free(p);
 }

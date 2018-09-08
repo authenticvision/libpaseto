@@ -71,7 +71,9 @@ void test_v2vectors(void) {
         printf("Running test '%s'...", case_->name);
         uint8_t nonce[paseto_v2_LOCAL_NONCEBYTES];
         nonce_load_hex(nonce, case_->nonce);
-        generate_reference_nonce(nonce, (const uint8_t *) case_->message, strlen(case_->message));
+        generate_reference_nonce(nonce,
+                (const uint8_t *) case_->message,
+                strlen(case_->message));
         nonce_override(nonce);
         uint8_t key[paseto_v2_LOCAL_KEYBYTES];
         assert(paseto_v2_local_load_key_hex(key, case_->key) == true);
