@@ -4,61 +4,130 @@
 #include <stdbool.h>
 #include <stdint.h>
 #ifndef _WIN32
-    #include <unistd.h>
+#include <unistd.h>
 #endif
 
-#define paseto_v2_SYMMETRIC_KEYBYTES 32U
-#define paseto_v2_SYMMETRIC_NONCEBYTES 24U
+#define paseto_v2_LOCAL_KEYBYTES 32U
+#define paseto_v2_LOCAL_NONCEBYTES 24U
+
+#define paseto_v2_PUBLIC_PUBLICKEYBYTES 32U
+#define paseto_v2_PUBLIC_SECRETKEYBYTES 64U
 
 /**
- * Initialize the
+ * Initialize the library. Must be called before using any functionality.
  */
 bool paseto_init(void);
 
 /**
- * Frees resources returned by paseto_v2_encrypt/decrypt.
+ * Free resources returned by paseto_v2_local_encrypt/decrypt.
  */
 void paseto_free(void *p);
 
 /**
- * Loads a hex-encoded key. Returns false on failure and sets errno.
+ * Load a hex-encoded key. Returns false on error and sets errno.
  */
-bool paseto_v2_load_symmetric_key_hex(uint8_t key[paseto_v2_SYMMETRIC_KEYBYTES], const char key_hex[2 * paseto_v2_SYMMETRIC_KEYBYTES]);
+bool paseto_v2_local_load_key_hex(uint8_t key[static paseto_v2_LOCAL_KEYBYTES], const char *key_hex);
 
 /**
- * Loads a base64-url-encoded key (without padding). Returns false on failure and sets errno.
+ * Load a base64-url-encoded key (without padding). Returns false on error and sets errno.
  */
-bool paseto_v2_load_symmetric_key_base64(uint8_t key[paseto_v2_SYMMETRIC_KEYBYTES], const char *key_base64);
+bool paseto_v2_local_load_key_base64(uint8_t key[static paseto_v2_LOCAL_KEYBYTES], const char *key_base64);
 
 /**
- * Encrypts and encodes `message` using `key`, attaching `footer` if it is not NULL.
- * Returns a pointer to a NULL-terminated string. It is the callers responsibility to free it.
- * Returns NULL on failure and sets errno.
+ * Encrypt and encode `message` using `key`, attaching `footer` if it is not NULL.
+ * Returns a pointer to a NULL-terminated string with the encrypted and encoded
+ * message. It is the callers responsibility to free it using `paseto_free`.
+ * Returns NULL on error and sets errno accordingly.
  */
-char *paseto_v2_encrypt(
+char *paseto_v2_local_encrypt(
         const uint8_t *message, size_t message_len,
-        const uint8_t key[paseto_v2_SYMMETRIC_KEYBYTES],
+        const uint8_t key[static paseto_v2_LOCAL_KEYBYTES],
         const uint8_t *footer, size_t footer_len);
 
 /**
- * Decodes and decrypts the NULL-terminated `encoded` using `key`. If `footer`
+ * Decode and decrypt the NULL-terminated `encoded` using `key`. If `footer`
  * is not NULL and the encoded message contains a non-zero-length footer, it
- * will contain a pointer to the decoded footer. It is the callers
+ * will be set to a pointer to the decoded footer. It is the callers
  * responsibility to free it.
- * Returns a pointer to the decrypted message. `message_len` contains its
- * length. It is the callers responsibility to free it by calling paseto_free.
- * Returns NULL on failure and sets errno.
+ * Returns a pointer to the decrypted message. `message_len` is set ti its
+ * length. It is the callers responsibility to free it using `paseto_free`.
+ * Returns NULL on error and sets errno.
+ * Returns NULL on verification failure.
  */
-uint8_t *paseto_v2_decrypt(
+uint8_t *paseto_v2_local_decrypt(
         const char *encoded, size_t *message_len,
-        const uint8_t key[paseto_v2_SYMMETRIC_KEYBYTES],
+        const uint8_t key[static paseto_v2_LOCAL_KEYBYTES],
         uint8_t **footer, size_t *footer_len);
 
 /**
- * Nonce generation hook
+ * Load a hex-encoded key. Returns false on error and sets errno.
  */
-extern void (*generate_nonce)(uint8_t nonce[paseto_v2_SYMMETRIC_NONCEBYTES], const uint8_t *message, size_t message_len, const uint8_t *footer, size_t footer_len);
+bool paseto_v2_public_load_public_key_hex(
+        uint8_t key[static paseto_v2_PUBLIC_PUBLICKEYBYTES],
+        const char *key_hex);
 
-void default_generate_nonce(uint8_t nonce[paseto_v2_SYMMETRIC_NONCEBYTES], const uint8_t *message, size_t message_len, const uint8_t *footer, size_t footer_len);
+/**
+ * Load a base64-url-encoded key (without padding). Returns false on error and sets errno.
+ */
+bool paseto_v2_public_load_public_key_base64(
+        uint8_t key[static paseto_v2_PUBLIC_PUBLICKEYBYTES],
+        const char *key_base64);
+
+/**
+ * Load a hex-encoded key. Returns false on error and sets errno.
+ */
+bool paseto_v2_public_load_secret_key_hex(
+        uint8_t key[static paseto_v2_PUBLIC_SECRETKEYBYTES],
+        const char *key_hex);
+
+/**
+ * Load a base64-url-encoded key (without padding). Returns false on error and sets errno.
+ */
+bool paseto_v2_public_load_secret_key_base64(
+        uint8_t key[static paseto_v2_PUBLIC_SECRETKEYBYTES],
+        const char *key_base64);
+
+/**
+ * Sign and encodes `message` using `key`, attaching `footer` if it is not NULL.
+ * Returns a pointer to a NULL-terminated string with the signed and encoded
+ * message. It is the callers responsibility to free it using `paseto_free`.
+ * Returns NULL on error and sets errno accordingly.
+ */
+char *paseto_v2_public_sign(
+        const uint8_t *message, size_t message_len,
+        const uint8_t key[static paseto_v2_PUBLIC_SECRETKEYBYTES],
+        const uint8_t *footer, size_t footer_len);
+
+/**
+ * Decode and verify the NULL-terminated `encoded` using `key`. If `footer`
+ * is not NULL and the encoded message contains a non-zero-length footer, it
+ * will be set to a pointer to the decoded footer. It is the callers
+ * responsibility to free it.
+ * Returns a pointer to the decoded message. `message_len` is set to its
+ * length. It is the callers responsibility to free it using `paseto_free`.
+ * Returns NULL on error and sets errno.
+ * Returns NULL on verification failure.
+ */
+uint8_t *paseto_v2_public_verify(
+        const char *encoded, size_t *message_len,
+        const uint8_t key[static paseto_v2_PUBLIC_PUBLICKEYBYTES],
+        uint8_t **footer, size_t *footer_len);
+
+
+
+/**
+ * Nonce generation hook for unit testing
+ */
+typedef void(*generate_nonce_fn)(
+        uint8_t nonce[static paseto_v2_LOCAL_NONCEBYTES],
+        const uint8_t *message, size_t message_len,
+        const uint8_t *footer, size_t footer_len);
+
+extern generate_nonce_fn generate_nonce;
+
+void default_generate_nonce(
+        uint8_t nonce[static paseto_v2_LOCAL_NONCEBYTES],
+        const uint8_t *message, size_t message_len,
+        const uint8_t *footer, size_t footer_len);
 
 #endif

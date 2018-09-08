@@ -9,4 +9,5 @@ int main() {
     assert(paseto_init());
     run_tests();
     test_v2vectors();
+    test_v2publicvectors();
 }

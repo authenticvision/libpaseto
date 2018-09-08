@@ -11,8 +11,11 @@ include_directories(${SODIUM_INCLUDE_DIRS})
 
 include_directories(include)
 set(PASETO_SOURCES
-        src/paseto_v2_symmetric.c
+        src/paseto_v2_local.c
+        src/paseto_v2_public.c
         src/paseto.c
+        src/helpers.c
+        src/helpers.h
         include/paseto.h)
 
 # shared library build
@@ -27,7 +30,8 @@ add_executable(pasetotest
         test/test.h
         test/test.c
         test/v2vectors.h
-        test/v2vectors.c)
+        test/v2vectors.c
+        test/v2publicvectors.c)
 target_compile_definitions(pasetotest PRIVATE _POSIX_C_SOURCE=200809L)
 target_link_libraries(pasetotest ${SODIUM_LIBRARIES} paseto)
 
