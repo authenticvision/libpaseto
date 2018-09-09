@@ -1,7 +1,9 @@
 # C library for PASETO
-*libpaseto* is a C implementation of
-[Platform-Agnostic Security Tokens](https://github.com/paragonie/paseto).
-*It only supports v2 public and private tokens.* v1 is not supported.
+*libpaseto* is a low-level implementation of
+[Platform-Agnostic Security Tokens](https://github.com/paragonie/paseto) in C.
+It only supports v2 public and private tokens, v1 is not supported. PASETO
+Registered Claims are not in the scope of this project but can be built ontop
+of *libpaseto*.
 
 ## Building
 *libpaseto* only depends on [libsodium](https://libsodium.org/) and uses CMake.
@@ -12,6 +14,8 @@ mkdir build
 cd build
 cmake ..
 make
+cd ..
+build/pasetotest
 ```
 
 ## Usage overview
