@@ -20,6 +20,12 @@ set(PASETO_SOURCES
 
 # shared library build
 add_library(paseto SHARED ${PASETO_SOURCES})
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        message(STATUS "Building on MacOS..")
+        link_directories("/usr/local/lib")
+endif()
+
 target_link_libraries(paseto ${SODIUM_LIBRARIES})
 
 # test executable
