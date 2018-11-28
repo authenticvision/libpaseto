@@ -17,21 +17,21 @@ static const size_t mac_len = crypto_aead_xchacha20poly1305_ietf_ABYTES;
 
 
 bool paseto_v2_local_load_key_hex(
-        uint8_t key[static paseto_v2_LOCAL_KEYBYTES],
+        uint8_t key[paseto_v2_LOCAL_KEYBYTES],
         const char *key_hex) {
     return key_load_hex(key, paseto_v2_LOCAL_KEYBYTES, key_hex);
 }
 
 
 bool paseto_v2_local_load_key_base64(
-        uint8_t key[static paseto_v2_LOCAL_KEYBYTES],
+        uint8_t key[paseto_v2_LOCAL_KEYBYTES],
         const char *key_base64) {
     return key_load_base64(key, paseto_v2_LOCAL_KEYBYTES, key_base64);
 }
 
 
 void default_generate_nonce(
-        uint8_t nonce[static paseto_v2_LOCAL_NONCEBYTES],
+        uint8_t nonce[paseto_v2_LOCAL_NONCEBYTES],
         const uint8_t *message, size_t message_len,
         const uint8_t *footer, size_t footer_len) {
     uint8_t nonce_key[paseto_v2_LOCAL_NONCEBYTES];
@@ -52,7 +52,7 @@ generate_nonce_fn generate_nonce = default_generate_nonce;
 
 char *paseto_v2_local_encrypt(
         const uint8_t *message, size_t message_len,
-        const uint8_t key[static paseto_v2_LOCAL_KEYBYTES],
+        const uint8_t key[paseto_v2_LOCAL_KEYBYTES],
         const uint8_t *footer, size_t footer_len) {
     if (!message || !key) {
         errno = EINVAL;

@@ -21,28 +21,28 @@ static const size_t signature_len = crypto_sign_BYTES;
 
 
 bool paseto_v2_public_load_public_key_hex(
-        uint8_t key[static paseto_v2_PUBLIC_PUBLICKEYBYTES],
+        uint8_t key[paseto_v2_PUBLIC_PUBLICKEYBYTES],
         const char *key_hex) {
     return key_load_hex(key, paseto_v2_PUBLIC_PUBLICKEYBYTES, key_hex);
 }
 
 
 bool paseto_v2_public_load_public_key_base64(
-        uint8_t key[static paseto_v2_PUBLIC_PUBLICKEYBYTES],
+        uint8_t key[paseto_v2_PUBLIC_PUBLICKEYBYTES],
         const char *key_base64) {
     return key_load_base64(key, paseto_v2_PUBLIC_PUBLICKEYBYTES, key_base64);
 }
 
 
 bool paseto_v2_public_load_secret_key_hex(
-        uint8_t key[static paseto_v2_PUBLIC_SECRETKEYBYTES],
+        uint8_t key[paseto_v2_PUBLIC_SECRETKEYBYTES],
         const char *key_hex) {
     return key_load_hex(key, paseto_v2_PUBLIC_SECRETKEYBYTES, key_hex);
 }
 
 
 bool paseto_v2_public_load_secret_key_base64(
-        uint8_t key[static paseto_v2_PUBLIC_SECRETKEYBYTES],
+        uint8_t key[paseto_v2_PUBLIC_SECRETKEYBYTES],
         const char *key_base64) {
     return key_load_base64(key, paseto_v2_PUBLIC_SECRETKEYBYTES, key_base64);
 }
@@ -50,7 +50,7 @@ bool paseto_v2_public_load_secret_key_base64(
 
 char *paseto_v2_public_sign(
         const uint8_t *message, size_t message_len,
-        const uint8_t key[static paseto_v2_LOCAL_KEYBYTES],
+        const uint8_t key[paseto_v2_LOCAL_KEYBYTES],
         const uint8_t *footer, size_t footer_len) {
     if (!message || !key) {
         errno = EINVAL;
