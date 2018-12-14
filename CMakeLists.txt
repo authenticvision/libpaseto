@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
-project(libpaseto C)
+project(libpaseto
+		VERSION 0.99
+		LANGUAGES C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_EXTENSIONS OFF)
@@ -18,9 +20,19 @@ set(PASETO_SOURCES
         src/helpers.h
         include/paseto.h)
 
+CONFIGURE_FILE("paseto.pc.in" "paseto.pc" @ONLY)
+
+
 # shared library build
 add_library(paseto SHARED ${PASETO_SOURCES})
 target_link_libraries(paseto ${SODIUM_LIBRARIES})
+install(TARGETS paseto
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
+install(FILES include/paseto.h
+        DESTINATION include)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/paseto.pc"
+        DESTINATION lib/pkgconfig)
 
 # test executable
 add_executable(pasetotest
