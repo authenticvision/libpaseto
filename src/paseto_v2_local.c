@@ -241,6 +241,7 @@ uint8_t *paseto_v2_local_decrypt(
         return NULL;
     }
 
+    // include a null terminator for convenience
     message[internal_message_len] = '\0';
 
     free(pa.base);

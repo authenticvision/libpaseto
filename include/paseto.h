@@ -57,8 +57,10 @@ char *paseto_v2_local_encrypt(
  * is not NULL and the encoded message contains a non-zero-length footer, it
  * will be set to a pointer to the decoded footer. It is the callers
  * responsibility to free it.
- * Returns a pointer to the decrypted message. `message_len` is set ti its
- * length. It is the callers responsibility to free it using `paseto_free`.
+ * Returns a pointer to the decrypted message. `message_len` is set to its
+ * length. For convenience, the message is terminated by a NULL byte. This NULL
+ * byte is *not* included in `message_len`. It is the callers responsibility to
+ * free it using `paseto_free`.
  * Returns NULL on error and sets errno.
  * Returns NULL on verification failure.
  */
