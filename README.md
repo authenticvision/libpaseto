@@ -28,7 +28,7 @@ build/pasetotest
   on success, a null pointer otherwise.
 - Clean up returned results using `paseto_free`
 
-Refer to [examples/example.c](example.c) for a detailed example.
+Refer to [example.c](examples/example.c) for a detailed example.
 
 ## License
 libpaseto is published under the [3-clause BSD license](LICENSE) and makes use
