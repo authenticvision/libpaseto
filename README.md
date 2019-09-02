@@ -1,6 +1,6 @@
 # C library for PASETO
 *libpaseto* is a low-level implementation of
-[Platform-Agnostic Security Tokens](https://github.com/paragonie/paseto) in C.
+[Platform-Agnostic Security Tokens](https://paseto.io/) in C.
 It only supports v2 public and private tokens, v1 is not supported. PASETO
 Registered Claims are not in the scope of this project but can be built ontop
 of *libpaseto*.
@@ -28,7 +28,7 @@ build/pasetotest
   on success, a null pointer otherwise.
 - Clean up returned results using `paseto_free`
 
-Refer to [example.c](example.c) for a detailed example.
+Refer to [examples/example.c](example.c) for a detailed example.
 
 ## License
 libpaseto is published under the [3-clause BSD license](LICENSE) and makes use
