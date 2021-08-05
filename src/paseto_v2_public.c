@@ -50,7 +50,7 @@ bool paseto_v2_public_load_secret_key_base64(
 
 char *paseto_v2_public_sign(
         const uint8_t *message, size_t message_len,
-        const uint8_t key[paseto_v2_LOCAL_KEYBYTES],
+        const uint8_t key[paseto_v2_PUBLIC_SECRETKEYBYTES],
         const uint8_t *footer, size_t footer_len) {
     if (!message || !key) {
         errno = EINVAL;
@@ -124,7 +124,7 @@ char *paseto_v2_public_sign(
 
 uint8_t *paseto_v2_public_verify(
         const char *encoded, size_t *message_len,
-        const uint8_t key[paseto_v2_LOCAL_KEYBYTES],
+        const uint8_t key[paseto_v2_PUBLIC_PUBLICKEYBYTES],
         uint8_t **footer, size_t *footer_len) {
     if (!encoded || !message_len || !key) {
         errno = EINVAL;
