@@ -21,38 +21,46 @@ static const size_t signature_len = crypto_sign_BYTES;
 
 
 bool paseto_v2_public_load_public_key_hex(
-        uint8_t key[paseto_v2_PUBLIC_PUBLICKEYBYTES],
+        v2_public_pk key,
         const char *key_hex) {
-    return key_load_hex(key, paseto_v2_PUBLIC_PUBLICKEYBYTES, key_hex);
+        key.header = V2_PUBLIC;
+    return key_load_hex(key.key_bytes, paseto_v2_PUBLIC_PUBLICKEYBYTES, key_hex);
 }
 
 
 bool paseto_v2_public_load_public_key_base64(
-        uint8_t key[paseto_v2_PUBLIC_PUBLICKEYBYTES],
+        v2_public_pk key,
         const char *key_base64) {
-    return key_load_base64(key, paseto_v2_PUBLIC_PUBLICKEYBYTES, key_base64);
+        key.header = V2_PUBLIC;
+    return key_load_base64(key.key_bytes, paseto_v2_PUBLIC_PUBLICKEYBYTES, key_base64);
 }
 
 
 bool paseto_v2_public_load_secret_key_hex(
-        uint8_t key[paseto_v2_PUBLIC_SECRETKEYBYTES],
+        v2_public_sk key,
         const char *key_hex) {
-    return key_load_hex(key, paseto_v2_PUBLIC_SECRETKEYBYTES, key_hex);
+        key.header = V2_PUBLIC;
+    return key_load_hex(key.key_bytes, paseto_v2_PUBLIC_SECRETKEYBYTES, key_hex);
 }
 
 
 bool paseto_v2_public_load_secret_key_base64(
-        uint8_t key[paseto_v2_PUBLIC_SECRETKEYBYTES],
+        v2_public_sk key,
         const char *key_base64) {
-    return key_load_base64(key, paseto_v2_PUBLIC_SECRETKEYBYTES, key_base64);
+        key.header = V2_PUBLIC;
+    return key_load_base64(key.key_bytes, paseto_v2_PUBLIC_SECRETKEYBYTES, key_base64);
 }
 
 
 char *paseto_v2_public_sign(
         const uint8_t *message, size_t message_len,
-        const uint8_t key[paseto_v2_PUBLIC_SECRETKEYBYTES],
+        v2_public_sk key,
         const uint8_t *footer, size_t footer_len) {
     if (!message || !key) {
+        errno = EINVAL;
+        return NULL;
+    }
+    if (key.header != V2_PUBLIC) {
         errno = EINVAL;
         return NULL;
     }
@@ -79,7 +87,7 @@ char *paseto_v2_public_sign(
     size_t pre_auth_len = pa.current - pa.base;
 
     uint8_t *ct = to_encode + message_len;
-    crypto_sign_detached(ct, NULL, pa.base, pre_auth_len, key);
+    crypto_sign_detached(ct, NULL, pa.base, pre_auth_len, key.key_bytes);
 
     free(pa.base);
 
@@ -124,9 +132,13 @@ char *paseto_v2_public_sign(
 
 uint8_t *paseto_v2_public_verify(
         const char *encoded, size_t *message_len,
-        const uint8_t key[paseto_v2_PUBLIC_PUBLICKEYBYTES],
+        const v2_public_pk key,
         uint8_t **footer, size_t *footer_len) {
     if (!encoded || !message_len || !key) {
+        errno = EINVAL;
+        return NULL;
+    }
+    if (key.header != V2_PUBLIC) {
         errno = EINVAL;
         return NULL;
     }
@@ -215,7 +227,7 @@ uint8_t *paseto_v2_public_verify(
         return NULL;
     }
     if (crypto_sign_verify_detached(
-            signature, pa.base, pre_auth_len, key) != 0) {
+            signature, pa.base, pre_auth_len, key.key_bytes) != 0) {
         free(decoded);
         free(decoded_footer);
         free(pa.base);
