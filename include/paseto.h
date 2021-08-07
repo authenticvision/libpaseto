@@ -17,25 +17,25 @@ extern "C"{
 #define paseto_v2_PUBLIC_PUBLICKEYBYTES 32U
 #define paseto_v2_PUBLIC_SECRETKEYBYTES 64U
 
-enum KeyHeader {
+enum paseto_key_header {
     V2_LOCAL = 4,
     V2_PUBLIC = 5
 };
 
-typedef struct {
-    KeyHeader header;
+struct paseto_v2_local_key {
+    paseto_key_header header;
     uint8_t key_bytes[paseto_v2_LOCAL_KEYBYTES];
-} v2_local_key;
+};
 
-typedef struct {
-    KeyHeader header;
+struct paseto_v2_local_pk {
+    paseto_key_header header;
     uint8_t key_bytes[paseto_v2_PUBLIC_PUBLICKEYBYTES];
-} v2_public_pk;
+};
 
-typedef struct {
-    KeyHeader header;
+struct paseto_v2_local_sk {
+    paseto_key_header header;
     uint8_t key_bytes[paseto_v2_PUBLIC_SECRETKEYBYTES];
-} v2_public_sk;
+};
 
 /**
  * Initialize the library. Must be called before using any functionality.
@@ -52,14 +52,14 @@ void paseto_free(void *p);
  * Returns false on error and sets errno.
  */
 bool paseto_v2_local_load_key_hex(
-        v2_local_key key, const char *key_hex);
+        struct paseto_v2_local_key *key, const char *key_hex);
 
 /**
  * Load a base64-url-encoded key (without padding).
  * Returns false on error and sets errno.
  */
 bool paseto_v2_local_load_key_base64(
-        v2_local_key key, const char *key_base64);
+        struct paseto_v2_local_key *key, const char *key_base64);
 
 /**
  * Encrypt and encode `message` using `key`, attaching `footer` if it is not NULL.
@@ -69,7 +69,7 @@ bool paseto_v2_local_load_key_base64(
  */
 char *paseto_v2_local_encrypt(
         const uint8_t *message, size_t message_len,
-        const v2_local_key key,
+        const struct paseto_v2_local_key *key,
         const uint8_t *footer, size_t footer_len);
 
 /**
@@ -86,14 +86,14 @@ char *paseto_v2_local_encrypt(
  */
 uint8_t *paseto_v2_local_decrypt(
         const char *encoded, size_t *message_len,
-        const v2_local_key key,
+        const struct paseto_v2_local_key *key,
         uint8_t **footer, size_t *footer_len);
 
 /**
  * Load a hex-encoded key. Returns false on error and sets errno.
  */
 bool paseto_v2_public_load_public_key_hex(
-        v2_public_pk key,
+        struct paseto_v2_public_pk *key,
         const char *key_hex);
 
 /**
@@ -101,7 +101,7 @@ bool paseto_v2_public_load_public_key_hex(
  * Returns false on error and sets errno.
  */
 bool paseto_v2_public_load_public_key_base64(
-        v2_public_pk key,
+        struct paseto_v2_public_pk *key,
         const char *key_base64);
 
 /**
@@ -109,7 +109,7 @@ bool paseto_v2_public_load_public_key_base64(
  * Returns false on error and sets errno.
  */
 bool paseto_v2_public_load_secret_key_hex(
-        v2_public_sk key,
+        struct paseto_v2_public_sk *key,
         const char *key_hex);
 
 /**
@@ -117,7 +117,7 @@ bool paseto_v2_public_load_secret_key_hex(
  * Returns false on error and sets errno.
  */
 bool paseto_v2_public_load_secret_key_base64(
-        v2_public_sk key,
+        struct paseto_v2_public_sk *key,
         const char *key_base64);
 
 /**
@@ -128,7 +128,7 @@ bool paseto_v2_public_load_secret_key_base64(
  */
 char *paseto_v2_public_sign(
         const uint8_t *message, size_t message_len,
-        const v2_public_sk key,
+        const struct paseto_v2_public_sk *key,
         const uint8_t *footer, size_t footer_len);
 
 /**
@@ -143,7 +143,7 @@ char *paseto_v2_public_sign(
  */
 uint8_t *paseto_v2_public_verify(
         const char *encoded, size_t *message_len,
-        const v2_public_pk key,
+        const struct paseto_v2_public_pk *key,
         uint8_t **footer, size_t *footer_len);
 
 
