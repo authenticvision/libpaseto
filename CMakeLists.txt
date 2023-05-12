@@ -48,7 +48,7 @@ target_compile_definitions(pasetotest PRIVATE _POSIX_C_SOURCE=200809L)
 target_link_libraries(pasetotest ${SODIUM_LIBRARIES} paseto)
 
 # examples
-set(EXAMPLES example paseto-v2-local-encrypt paseto-v2-local-decrypt)
+set(EXAMPLES example_v2_local example_v2_public gen-keys paseto-v2-local-encrypt paseto-v2-local-decrypt)
 foreach(EXAMPLE ${EXAMPLES})
 	add_executable(${EXAMPLE} examples/${EXAMPLE}.c)
 	target_link_libraries(${EXAMPLE} ${SODIUM_LIBRARIES} paseto)
