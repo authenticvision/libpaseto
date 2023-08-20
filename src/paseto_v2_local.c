@@ -17,16 +17,22 @@ static const size_t mac_len = crypto_aead_xchacha20poly1305_ietf_ABYTES;
 
 
 bool paseto_v2_local_load_key_hex(
-        uint8_t key[paseto_v2_LOCAL_KEYBYTES],
+        struct paseto_v2_local_key *key,
         const char *key_hex) {
-    return key_load_hex(key, paseto_v2_LOCAL_KEYBYTES, key_hex);
+        struct paseto_v2_local_key tmp;
+        *key = &tmp;
+        key->header = V2_LOCAL;
+    return key_load_hex(key->key_bytes, paseto_v2_LOCAL_KEYBYTES, key_hex);
 }
 
 
 bool paseto_v2_local_load_key_base64(
-        uint8_t key[paseto_v2_LOCAL_KEYBYTES],
+        struct paseto_v2_local_key *key,
         const char *key_base64) {
-    return key_load_base64(key, paseto_v2_LOCAL_KEYBYTES, key_base64);
+        struct paseto_v2_local_key tmp;
+        *key = &tmp;
+        key->header = V2_LOCAL;
+    return key_load_base64(key->key_bytes, paseto_v2_LOCAL_KEYBYTES, key_base64);
 }
 
 
@@ -52,9 +58,13 @@ generate_nonce_fn generate_nonce = default_generate_nonce;
 
 char *paseto_v2_local_encrypt(
         const uint8_t *message, size_t message_len,
-        const uint8_t key[paseto_v2_LOCAL_KEYBYTES],
+        const struct paseto_v2_local_key *key,
         const uint8_t *footer, size_t footer_len) {
     if (!message || !key) {
+        errno = EINVAL;
+        return NULL;
+    }
+    if (key->header != V2_LOCAL) {
         errno = EINVAL;
         return NULL;
     }
@@ -89,7 +99,7 @@ char *paseto_v2_local_encrypt(
             ct, NULL,
             message, message_len,
             pa.base, pre_auth_len,
-            NULL, nonce, key);
+            NULL, nonce, key->key_bytes);
 
     free(pa.base);
 
@@ -134,9 +144,13 @@ char *paseto_v2_local_encrypt(
 
 uint8_t *paseto_v2_local_decrypt(
         const char *encoded, size_t *message_len,
-        const uint8_t key[paseto_v2_LOCAL_KEYBYTES],
+        const struct paseto_v2_local_key *key,
         uint8_t **footer, size_t *footer_len) {
     if (!encoded || !message_len || !key) {
+        errno = EINVAL;
+        return NULL;
+    }
+    if (key->header != V2_LOCAL) {
         errno = EINVAL;
         return NULL;
     }
@@ -233,7 +247,7 @@ uint8_t *paseto_v2_local_decrypt(
             NULL,
             ct, ct_len,
             pa.base, pre_auth_len,
-            nonce, key) != 0) {
+            nonce, key->key_bytes) != 0) {
         free(decoded);
         free(pa.base);
         free(message);
